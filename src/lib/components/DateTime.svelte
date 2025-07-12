@@ -8,12 +8,12 @@
   let connected = false;
   let error = null;
 
-  const host = 'api.persephone.run';
+  const wsUrl = import.meta.env.VITE_API_WS_URL;
 
   function connect() {
     if (!browser) return;
 
-    socket = new WebSocket(`ws://${host}/ws/time/datetime`);
+    socket = new WebSocket(`${wsUrl}/time/datetime`);
 
     socket.onopen = () => {
       connected = true;

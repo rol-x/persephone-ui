@@ -29,7 +29,7 @@
 </script>
 
 <section>
-  <h2>🎮 Zmierz się </h2>
+  <h2>🎮 Człowiek jest tym, z czym się zmaga</h2>
   <ul style="list-style: none; padding-left: 0;">
     {#each games as game}
       <li style="margin-bottom: 0.75rem;">
