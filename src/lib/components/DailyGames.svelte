@@ -1,6 +1,11 @@
 <script>
   const games = [
     {
+      name: "Połączenia",
+      url: "/connections",
+      description: "Connections, ale po polsku"
+    },
+    {
       name: "Connections",
       url: "https://www.nytimes.com/games/connections",
       description: "Grupuj powiązane słowa"
@@ -88,7 +93,7 @@
     {
       name: "Disorderly",
       url: "https://playdisorderly.com/",
-      description: "Połącz wyrazy w grupy takie same"
+      description: "Uporządkuj w odpowiedniej kolejności"
     },
     {
       name: "Travle",
