@@ -6,9 +6,9 @@
 
   let author = '';
   let groups = [
-    { color: 'blue', wordsInput: '', explanation: '' },
-    { color: 'green', wordsInput: '', explanation: '' },
     { color: 'yellow', wordsInput: '', explanation: '' },
+    { color: 'green', wordsInput: '', explanation: '' },
+    { color: 'blue', wordsInput: '', explanation: '' },
     { color: 'purple', wordsInput: '', explanation: '' },
   ];
 
@@ -56,7 +56,7 @@
   }
 </script>
 
-<h2>🧠 Zaproponuj kategorie</h2>
+<h2>🧠 Zaproponuj dowolną kategorie</h2>
 
 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
   {#each groups as group}
@@ -65,14 +65,14 @@
       <input
         type="text"
         bind:value={group.wordsInput}
-        placeholder="długopis, klawiatura, zdjęcie w ramce, monitor"
+        placeholder="zszywacz, klawiatura, zdjęcie w ramce, monitor"
         style="width: 97%; margin-bottom: 0.5rem;" />
 
       <label><strong>Wyjaśnienie</strong></label>
       <input
         type="text"
         bind:value={group.explanation}
-        placeholder="Rzeczy znalezione na biurku"
+        placeholder="Rzeczy trzymane na biurku"
         style="width: 97%;" />
     </div>
   {/each}
