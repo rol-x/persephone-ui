@@ -5,6 +5,7 @@
   let allWords = [];
   let guessedGroups = [];
   let selected = new Set();
+  let shakeWords = new Set();
   let error = null;
 
   const httpUrl = import.meta.env.VITE_API_URL;
@@ -32,6 +33,7 @@
 
   function toggle(word) {
     if (isSolved(word)) return;
+    if (!selected.has(word) && selected.size >= 4) return;
     selected.has(word) ? selected.delete(word) : selected.add(word);
     selected = new Set(selected);
   }
@@ -52,6 +54,11 @@
     if (match && !guessedGroups.includes(match)) {
       guessedGroups = [...guessedGroups, match];
       selected.clear();
+    } else {
+      shakeWords = new Set(selected);
+      setTimeout(() => {
+        shakeWords.clear();
+      }, 500);
     }
   }
 </script>
@@ -68,8 +75,14 @@
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
           {#each group.wordsList as word}
             <div
-              style="flex: 1 0 22%; padding: 0.5rem; text-align: center;
-                     background: {group.color}; border-radius: 4px; color: white;">
+              style="
+                flex: 1 0 22%;
+                padding: 0.5rem;
+                text-align: center;
+                background-color: var(--group-color-{group.color});
+                border-radius: 4px;
+                font-weight: bold;
+                color: black;">
               {word}
             </div>
           {/each}
@@ -86,6 +99,7 @@
       {#each allWords as word}
         {#if !isSolved(word)}
           <button
+            class:shake={shakeWords.has(word)}
             on:click={() => toggle(word)}
             style="
               padding: 0.75rem;
@@ -109,3 +123,25 @@
 {:else}
   <p>⏳ Ładowanie gry...</p>
 {/if}
+
+<style>
+  :global(:root) {
+    --group-color-purple: #e6dbf3;
+    --group-color-green: #d8f0da;
+    --group-color-blue: #d8e9f8;
+    --group-color-yellow: #fdf3cb;
+  }
+
+  @keyframes shake {
+    0% { transform: translateX(0); }
+    20% { transform: translateX(-4px); }
+    40% { transform: translateX(4px); }
+    60% { transform: translateX(-3px); }
+    80% { transform: translateX(3px); }
+    100% { transform: translateX(0); }
+  }
+
+  .shake {
+    animation: shake 0.4s ease;
+  }
+</style>
