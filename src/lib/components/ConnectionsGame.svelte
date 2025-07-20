@@ -1,25 +1,26 @@
 <script>
   import { onMount } from 'svelte';
 
-  let gameData = null;
-  let allWords = [];
+  let gameId = null;
+  let words = [];
+  let authors = [];
   let guessedGroups = [];
   let selected = new Set();
   let shakeWords = new Set();
   let error = null;
 
   const httpUrl = import.meta.env.VITE_API_URL;
-  const apiUrl = `${httpUrl}/connections/daily`;
+  const getUrl = `${httpUrl}/connections/daily`;
 
   onMount(async () => {
     try {
-      const res = await fetch(apiUrl);
+      const res = await fetch(getUrl);
       const data = await res.json();
-      gameData = data;
-
-      const all = data.groups.flatMap(g => g.wordsList);
-      allWords = shuffle(all);
+      gameId = data.gameId;
+      words = shuffle(Array.from(data.words));
+      authors = data.authors;
     } catch (e) {
+      console.log(e);
       error = 'Błąd ładowania danych';
     }
   });
@@ -39,41 +40,69 @@
   }
 
   function isSolved(word) {
-    return guessedGroups.some(g => g.wordsList.includes(word));
+    return guessedGroups.some(g => g.words.includes(word));
   }
 
-  function submit() {
-    if (selected.size !== 4) return;
+  async function submit() {
+    if (selected.size !== 4 || !gameId) return;
 
-    const current = Array.from(selected).sort();
-    const match = gameData.groups.find(g => {
-      const sortedGroup = [...g.wordsList].sort();
-      return JSON.stringify(sortedGroup) === JSON.stringify(current);
-    });
+    const postUrl = `${httpUrl}/connections/${gameId}/check`;
 
-    if (match && !guessedGroups.includes(match)) {
-      guessedGroups = [...guessedGroups, match];
-      selected.clear();
-    } else {
-      shakeWords = new Set(selected);
-      setTimeout(() => {
-        shakeWords.clear();
-      }, 500);
+    const payload = {
+      words: Array.from(selected)
+    };
+
+    try {
+      const res = await fetch(postUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        error = 'Błąd połączenia z serwerem.';
+        return;
+      }
+
+      const data = await res.json();
+
+      if (data.correct) {
+        guessedGroups = [
+          ...guessedGroups,
+          {
+            words: payload.words,
+            explanation: data.explanation,
+            color: data.color
+          }
+        ];
+        selected.clear();
+      } else {
+        shakeWords = new Set(selected);
+        setTimeout(() => shakeWords.clear(), 500);
+      }
+
+    } catch (err) {
+      error = 'Błąd podczas zgłoszenia grupy.';
     }
   }
 </script>
 
 {#if error}
   <p style="color: red;">⚠️ {error}</p>
-{:else if gameData}
+{:else if gameId}
   <div style="display: flex; flex-direction: column; gap: 1rem;">
-    <h3>🧠 Połączenia {gameData.date}</h3>
+    <!-- Autorzy -->
+    {#if authors.length}
+      <p style="font-size: 0.8em; color: #777;">
+        Autorzy: {authors.join(', ')}
+      </p>
+    {/if}
 
     <!-- Rozwiązane grupy -->
     {#each guessedGroups as group}
       <div style="margin-bottom: 1rem;">
         <div style="display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.25rem;">
-          {#each group.wordsList as word}
+          {#each group.words as word}
             <div
               style="
                 flex: 1 0 22%;
@@ -93,10 +122,10 @@
       </div>
     {/each}
 
-    <!-- Pozostałe słowa -->
+    <!-- Nierozwiązane słowa -->
     <div
       style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem;">
-      {#each allWords as word}
+      {#each words as word}
         {#if !isSolved(word)}
           <button
             class:shake={shakeWords.has(word)}
@@ -119,6 +148,7 @@
       style="margin-top: 1rem; padding: 0.5rem 1rem;">
       Zatwierdź
     </button>
+
   </div>
 {:else}
   <p>⏳ Ładowanie gry...</p>
