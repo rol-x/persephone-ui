@@ -179,6 +179,7 @@
     display: flex;
     flex-direction: column;
     gap: 1rem;
+    flex-wrap: wrap;
   }
 
   .error {
@@ -200,6 +201,7 @@
     align-items: center;
     text-transform: uppercase;
     gap: 0.5rem;
+    height: 40px;
   }
 
   .solved-title {
@@ -215,7 +217,6 @@
     display: grid;
     grid-template-columns: repeat(4, 1fr);
     gap: 0.5rem;
-    margin-top: 1rem;
   }
 
   .tile {
@@ -255,6 +256,24 @@
     border-radius: 12px;
     background: #eaffea;
     text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .container {
+      max-width: 95vw;
+      padding: 0;
+      margin: 0;
+    }
+
+    .grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .tile {
+      height: auto;
+      aspect-ratio: 1 / 1;
+      font-size: 1em;
+    }
   }
 
   :global(:root) {
