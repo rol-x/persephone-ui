@@ -50,10 +50,7 @@
     if (selected.size !== 4 || !gameId) return;
 
     const postUrl = `${httpUrl}/connections/${gameId}/check`;
-
-    const payload = {
-      words: Array.from(selected)
-    };
+    const payload = { words: Array.from(selected) };
 
     try {
       const res = await fetch(postUrl, {
@@ -123,85 +120,41 @@
 
 <div class="container">
   {#if error}
-    <p style="color: red;">⚠️ {error}</p>
+    <p class="error">⚠️ {error}</p>
   {:else if gameId}
-    <div class="container" style="display: flex; flex-direction: column; gap: 1rem;">
+    <div class="inner">
       {#if authors.length}
-        <p style="font-size: 0.8em; color: #777;">
-          Autorzy: {authors.join(', ')}
-        </p>
+        <p class="authors">Autorzy: {authors.join(', ')}</p>
       {/if}
 
       {#each guessedGroups as group}
-        <div
-          style="
-            flex: 1 0 100%;
-            padding: 1rem;
-            text-align: center;
-            background-color: var(--group-color-{group.color});
-            border-radius: 6px;
-            font-weight: bold;
-            color: black;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-transform: uppercase;
-            gap: 0.5rem;
-          ">
-          <div style="font-size: 1rem;">
-            {group.explanation}
-          </div>
-          <div style="font-size: 0.85rem; font-weight: normal;">
-            {group.words.join(', ')}
-          </div>
+        <div class="solved-group" style="background-color: var(--group-color-{group.color})">
+          <div class="solved-title">{group.explanation}</div>
+          <div class="solved-words">{group.words.join(', ')}</div>
         </div>
       {/each}
 
-      <div
-        style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; margin-top: 1rem;">
+      <div class="grid">
         {#each words as word}
           {#if !isSolved(word)}
             <button
+              class:selected={selected.has(word)}
               class:shake={shakeWords.has(word)}
-              on:click={() => toggle(word)}
-              style={`
-                height: 60px;
-                font-family: sans-serif;
-                text-transform: uppercase;
-                font-weight: bold;
-                font-size: 1rem;
-                border: none;
-                border-radius: 8px;
-                cursor: pointer;
-                background: ${selected.has(word) ? '#4a4a4a' : '#f3f3f3'};
-                color: ${selected.has(word) ? 'white' : 'black'};
-                transition: background 0.2s, color 0.2s;
-              `}>
+              class="tile"
+              on:click={() => toggle(word)}>
               {word}
             </button>
           {/if}
         {/each}
       </div>
 
-      <button on:click={submit}
-        disabled={selected.size !== 4}
-        style="
-          margin-top: 1rem;
-          padding: 0.6rem 1.2rem;
-          font-family: sans-serif;
-          text-transform: uppercase;
-          font-weight: bold;
-          background: black;
-          color: white;
-          border: none;
-          border-radius: 8px;
-          cursor: pointer;">
+      <button class="submit-btn" on:click={submit} disabled={selected.size !== 4}>
         Zatwierdź
       </button>
 
       {#if isComplete}
-        <div style="margin-top: 2rem; padding: 1rem; border: 2px dashed #4caf50; border-radius: 12px; background: #eaffea;">
-          <h2 style="color: #2e7d32;">🎉 Gratulacje!</h2>
+        <div class="complete-box">
+          <h2>🎉 Gratulacje!</h2>
           <p>Rozwiązałeś wszystkie grupy!</p>
           {#if solvedNumber}
             <p>Jesteś <strong>{solvedNumber}.</strong> osobą, która tego dokonała 💪</p>
@@ -216,10 +169,92 @@
 
 <style>
   .container {
-    max-width: 720px;
+    max-width: 620px;
     margin: 0 auto;
     padding: 1rem;
     font-family: sans-serif;
+  }
+
+  .inner {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .error {
+    color: red;
+  }
+
+  .authors {
+    font-size: 0.8em;
+    color: #777;
+  }
+
+  .solved-group {
+    padding: 1rem;
+    border-radius: 6px;
+    font-weight: bold;
+    color: black;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-transform: uppercase;
+    gap: 0.5rem;
+  }
+
+  .solved-title {
+    font-size: 1rem;
+  }
+
+  .solved-words {
+    font-size: 0.85rem;
+    font-weight: normal;
+  }
+
+  .grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.5rem;
+    margin-top: 1rem;
+  }
+
+  .tile {
+    height: 78px;
+    font-size: 1.1em;
+    font-weight: 700;
+    text-transform: uppercase;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    background: #efefe6;
+    color: black;
+    transition: background 0.2s, color 0.2s;
+  }
+
+  .tile.selected {
+    background: #444;
+    color: white;
+  }
+
+  .submit-btn {
+    margin-top: 1rem;
+    padding: 0.6rem 1.2rem;
+    text-transform: uppercase;
+    font-weight: bold;
+    background: black;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+  }
+
+  .complete-box {
+    margin-top: 2rem;
+    padding: 1rem;
+    border: 2px dashed #4caf50;
+    border-radius: 12px;
+    background: #eaffea;
+    text-align: center;
   }
 
   :global(:root) {
