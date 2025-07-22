@@ -1,4 +1,5 @@
 <script>
+  import AutoFontSize from './AutoFontSize.svelte'
   import { onMount } from 'svelte';
   import confetti from 'canvas-confetti';
 
@@ -145,7 +146,7 @@
               class:shake={shakeWords.has(word)}
               class="tile"
               on:click={() => toggle(word)}>
-              {word}
+              <AutoFontSize text={word}/>
             </button>
           {/if}
         {/each}
@@ -190,8 +191,9 @@
   }
 
   .authors {
-    font-size: 0.8em;
+    font-size: 0.75em;
     color: #777;
+    margin-bottom: 5px;
   }
 
   .solved-group {
@@ -235,6 +237,7 @@
     color: black;
     overflow: hidden;
     transition: background 0.2s, color 0.2s;
+    padding: 0;
   }
 
   .tile.selected {
@@ -277,7 +280,7 @@
     .tile {
       height: auto;
       aspect-ratio: 1 / 1;
-      font-size: 1em;
+      font-size: clamp(1.1rem, 1.8vw, 0.3rem);
     }
   }
 
