@@ -273,14 +273,9 @@
       margin: 0;
     }
 
-    .grid {
-      grid-template-columns: repeat(4, 1fr);
-    }
-
     .tile {
       height: auto;
       aspect-ratio: 1 / 1;
-      font-size: clamp(1.1rem, 1.8vw, 0.3rem);
     }
   }
 

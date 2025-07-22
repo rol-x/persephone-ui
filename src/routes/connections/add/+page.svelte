@@ -56,33 +56,34 @@
   }
 </script>
 
-<h2>🧠 Zaproponuj dowolną kategorie</h2>
+<div class="container">
+  <h2>🧠 Zaproponuj dowolną kategorie</h2>
 
-<div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 1rem; margin-bottom: 1.5rem;">
-  {#each groups as group}
-    <div style="background-color: var(--group-color-{group.color}); padding: 1rem; border-radius: 6px;">
-      <label><strong>Wyrazy (po przecinku)</strong></label>
-      <input
-        type="text"
-        bind:value={group.wordsInput}
-        placeholder="zszywacz, klawiatura, zdjęcie w ramce, monitor"
-        style="width: 97%; margin-bottom: 0.5rem;" />
+  <div class="propose-groups">
+    {#each groups as group}
+      <div style="background-color: var(--group-color-{group.color}); padding: 1rem; border-radius: 6px;">
+        <label><strong>Wyrazy (po przecinku)</strong></label>
+        <input
+          type="text"
+          bind:value={group.wordsInput}
+          placeholder="zszywacz, klawiatura, zdjęcie w ramce, monitor"
+          style="width: 97%; margin-bottom: 0.5rem;" />
 
-      <label><strong>Wyjaśnienie</strong></label>
-      <input
-        type="text"
-        bind:value={group.explanation}
-        placeholder="Rzeczy trzymane na biurku"
-        style="width: 97%;" />
-    </div>
-  {/each}
+        <label><strong>Wyjaśnienie</strong></label>
+        <input
+          type="text"
+          bind:value={group.explanation}
+          placeholder="Rzeczy trzymane na biurku"
+          style="width: 97%;" />
+      </div>
+    {/each}
+  </div>
+
+  <label><strong>Autor</strong></label>
+  <input class="author" type="text" bind:value={author} placeholder="Twoje imię lub nick"/>
+
+  <button on:click={submit} style="padding: 0.5rem 1rem;">Wyślij</button>
 </div>
-
-<label><strong>Autor</strong></label>
-<input type="text" bind:value={author} placeholder="Twoje imię lub nick"
-  style="width: 16%; margin-bottom: 1rem;" />
-
-<button on:click={submit} style="padding: 0.5rem 1rem;">Wyślij</button>
 
 {#if message}
   <p style="margin-top: 1rem;">{message}</p>
@@ -96,6 +97,22 @@
     --group-color-purple: #e6dbf3;
   }
 
+  .container {
+    margin: 10px 10px;
+  }
+
+  .propose-groups {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1rem;
+    margin: 1.5rem auto;
+  }
+
+  .author {
+    width: 20%;
+    margin-bottom: 1rem;
+  }
+
   input {
     padding: 0.4rem;
     border: 1px solid #999;
@@ -105,5 +122,16 @@
   label {
     display: block;
     margin-bottom: 0.2rem;
+  }
+
+  @media (max-width: 600px) {
+    .propose-groups {
+      grid-template-columns: 1fr;
+    }
+
+    .author {
+      width: 60%;
+      margin-right: 5px;
+    }
   }
 </style>

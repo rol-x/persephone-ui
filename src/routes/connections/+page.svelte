@@ -3,12 +3,12 @@
 </script>
 
 <div class="page-container">
-<h1 class="page-title">🧩 Połączenia </h1>
-<ConnectionsGame />
+  <h1 class="page-title">🧩 Połączenia </h1>
+  <ConnectionsGame />
 
-<a href="/connections/add" class="propose-button">
-  ➕ Zaproponuj kategorie
-</a>
+  <a href="/connections/add" class="propose-button">
+    ➕ Zaproponuj kategorie
+  </a>
 </div>
 
 <style>
