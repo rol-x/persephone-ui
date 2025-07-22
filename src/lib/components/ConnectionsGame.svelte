@@ -5,6 +5,7 @@
   let gameId = null;
   let words = [];
   let authors = [];
+  let gameNumber = 0;
   let guessedGroups = [];
   let selected = new Set();
   let shakeWords = new Set();
@@ -22,9 +23,11 @@
       gameId = data.gameId;
       words = shuffle(Array.from(data.words));
       authors = data.authors;
+      gameNumber = data.gameNumber;
     } catch (e) {
       console.log(e);
-      error = 'Błąd ładowania danych';
+      if (e.message === 'Failed to fetch') error = 'Błąd połączenia z serwerem.';
+      else error = 'Błąd ładowania danych gry.';
     }
   });
 
@@ -123,8 +126,8 @@
     <p class="error">⚠️ {error}</p>
   {:else if gameId}
     <div class="inner">
-      {#if authors.length}
-        <p class="authors">No. {gameId} - Autorzy: {authors.join(', ')}</p>
+      {#if authors && gameNumber}
+        <p class="authors">No. {gameNumber} - Autorzy: {authors}</p>
       {/if}
 
       {#each guessedGroups as group}

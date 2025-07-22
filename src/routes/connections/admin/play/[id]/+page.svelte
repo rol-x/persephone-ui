@@ -6,7 +6,7 @@
   let proposedGameId: string;
   let allWords: string[] = [];
   let words: string[] = [];
-  let author: string[] = [];
+  let authors: string[] = [];
 
   let guessedGroups = [];
   let allGroups = [];
@@ -31,7 +31,7 @@
     try {
       const res = await fetch(`${httpUrl}/propositions/${proposedGameId}`);
       const groups = await res.json();
-      author = groups[0].author;
+      authors = groups.map(g => g.author).filter((v, i, a) => a.indexOf(v) === i).join(', ');
 
       allGroups = groups;
       guessedGroups = [];
@@ -162,7 +162,7 @@
         Zatwierdź
       </button>
 
-      <div class="author">Autor: {author}</div>
+      <div class="author">Autorzy: {authors}</div>
 
       <div class="schedule-section">
         <label for="scheduleDate">Ustaw na dzień:</label>
