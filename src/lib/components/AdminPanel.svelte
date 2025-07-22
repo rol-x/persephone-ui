@@ -39,11 +39,72 @@
       error = e.message;
     }
   }
+
+  async function loadData() {
+    try {
+      const res = await fetch(`${httpUrl}/propositions`, {
+        headers: {
+          'Authorization': 'Basic ' + btoa(`${username}:${password}`)
+        }
+      });
+
+      if (!res.ok) throw new Error('Niepoprawne dane logowania lub błąd serwera');
+
+      const data = await res.json();
+
+      groupedPropositions = data.reduce((acc, item) => {
+        if (!acc[item.proposedGameId]) {
+          acc[item.proposedGameId] = [];
+        }
+        acc[item.proposedGameId].push(item);
+        return acc;
+      }, {});
+    } catch (e) {
+      error = e.message;
+    }
+  }
+
+  let showModal = false;
+  let editedGroup = null;
+
+  function openEditModal(group) {
+    editedGroup = { ...group };
+    editedGroup.wordsString = group.words.join(','); // dla inputa
+    showModal = true;
+  }
+
+  async function saveEditedGroup() {
+    const payload = {
+        proposedGroupId: editedGroup.proposedGroupId,
+        proposedGameId: editedGroup.proposedGameId,
+        words: editedGroup.wordsString.trim(),
+        explanation: editedGroup.explanation,
+        color: editedGroup.color,
+        author: editedGroup.author
+    };
+
+    try {
+        const res = await fetch(`${httpUrl}/propositions`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+          showModal = false;
+          await loadData();
+        } else {
+          alert('Błąd zapisu');
+        }
+    } catch (e) {
+        alert('Błąd sieci');
+    }
+  }
 </script>
 
 {#if showAuth}
-  <div class="modal">
-    <div class="modal-box">
+  <div class="login-modal">
+    <div class="login-modal-box">
       <h2>🔐 Logowanie</h2>
       <input placeholder="Użytkownik" bind:value={username} />
       <input placeholder="Hasło" type="password" bind:value={password} />
@@ -71,6 +132,7 @@
                 <div><strong>Wyjaśnienie:</strong> {hideContent ? '******' : g.explanation}</div>
                 <div><strong>Autor:</strong> {g.author}</div>
                 <div><strong>Kolor:</strong> {g.color}</div>
+                <button on:click={() => openEditModal(g)}>✏️ Edytuj</button>
             </div>
             {/each}
             {#if groups.length === 4}
@@ -83,8 +145,69 @@
   </div>
 {/if}
 
+{#if showModal}
+  <div class="modal-backdrop">
+    <div class="modal">
+      <h3>Edytuj kategorię</h3>
+
+      <label>Słowa:</label>
+      <input type="text" bind:value={editedGroup.wordsString} />
+
+      <label>Wyjaśnienie:</label>
+      <input type="text" bind:value={editedGroup.explanation} />
+
+      <label>Kolor:</label>
+      <select bind:value={editedGroup.color}>
+        <option value="yellow">yellow</option>
+        <option value="green">green</option>
+        <option value="blue">blue</option>
+        <option value="purple">purple</option>
+      </select>
+
+      <label>Autor:</label>
+      <input type="text" bind:value={editedGroup.author} />
+
+      <div class="modal-buttons">
+        <button on:click={saveEditedGroup}>💾 Zapisz</button>
+        <button on:click={() => showModal = false}>Anuluj</button>
+      </div>
+    </div>
+  </div>
+{/if}
+
 <style>
+  .modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100;
+  }
+
   .modal {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .modal-buttons {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1rem;
+  }
+
+  .login-modal {
     position: fixed;
     inset: 0;
     display: flex;
@@ -93,7 +216,7 @@
     background: rgba(0,0,0,0.5);
   }
 
-  .modal-box {
+  .login-modal-box {
     background: white;
     padding: 2rem;
     border-radius: 8px;
@@ -103,12 +226,12 @@
     width: 300px;
   }
 
-  .modal-box input {
+  .login-modal-box input {
     padding: 0.5rem;
     font-size: 1rem;
   }
 
-  .modal-box button {
+  .login-modal-box button {
     padding: 0.6rem;
     font-weight: bold;
     background: black;
@@ -219,5 +342,5 @@
   .play-button:hover {
     background: #225a9e;
   }
-  
+
 </style>
