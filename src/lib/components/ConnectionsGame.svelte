@@ -1,5 +1,5 @@
 <script>
-  import AutoFontSize from './AutoFontSize.svelte'
+  import WordsGrid from './WordsGrid.svelte';
   import { onMount } from 'svelte';
   import confetti from 'canvas-confetti';
 
@@ -138,19 +138,13 @@
         </div>
       {/each}
 
-      <div class="grid">
-        {#each words as word}
-          {#if !isSolved(word)}
-            <button
-              class:selected={selected.has(word)}
-              class:shake={shakeWords.has(word)}
-              class="tile"
-              on:click={() => toggle(word)}>
-              <AutoFontSize text={word}/>
-            </button>
-          {/if}
-        {/each}
-      </div>
+      <WordsGrid
+        {words}
+        {selected}
+        {shakeWords}
+        {toggle}
+        {isSolved}
+      />
 
       <button class="submit-btn" on:click={submit} disabled={selected.size !== 4}>
         Zatwierdź
@@ -183,7 +177,6 @@
     display: flex;
     flex-direction: column;
     gap: 0.5rem;
-    flex-wrap: wrap;
   }
 
   .error {

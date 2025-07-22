@@ -1,4 +1,5 @@
 <script lang="ts">
+  import WordsGrid from '$lib/components/WordsGrid.svelte';
   import { onMount } from 'svelte';
   import { page } from '$app/stores';
   import confetti from 'canvas-confetti';
@@ -24,7 +25,6 @@
 
   $: proposedGameId = $page.params.id;
 
-  // ← OTO KLUCZOWA LINIA: przelicza słowa po każdym zgadnięciu!
   $: words = allWords.filter(w => !guessedGroups.some(g => g.words.includes(w)));
 
   onMount(async () => {
@@ -131,7 +131,6 @@
   }
 </script>
 
-<!-- HTML & STYLING BEZ ZMIAN -->
 <div class="container">
   {#if error}
     <p class="error">⚠️ {error}</p>
@@ -146,17 +145,13 @@
         </div>
       {/each}
 
-      <div class="grid">
-        {#each words as word}
-          <button
-            class:selected={selected.has(word)}
-            class:shake={shakeWords.has(word)}
-            class="tile"
-            on:click={() => toggle(word)}>
-            {word}
-          </button>
-        {/each}
-      </div>
+      <WordsGrid
+        {words}
+        {selected}
+        {shakeWords}
+        {toggle}
+        {isSolved}
+      />
 
       <button class="submit-btn" on:click={submit} disabled={selected.size !== 4}>
         Zatwierdź
@@ -194,10 +189,12 @@
 
 <style>
   .container {
+    width: 100%;
     max-width: 620px;
     margin: 0 auto;
     padding: 1rem;
     font-family: sans-serif;
+    box-sizing: border-box;
   }
 
   .inner {
@@ -266,6 +263,7 @@
     border: none;
     border-radius: 8px;
     cursor: pointer;
+    width: 100%;
   }
 
   .complete-box {
@@ -275,6 +273,18 @@
     border-radius: 12px;
     background: #eaffea;
     text-align: center;
+  }
+
+  @media (max-width: 600px) {
+    .container {
+      width: 100%;
+      padding: 0;
+    }
+
+    .tile {
+      height: auto;
+      aspect-ratio: 1 / 1;
+    }
   }
 
   :global(:root) {
