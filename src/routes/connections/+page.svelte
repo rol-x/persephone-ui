@@ -2,7 +2,8 @@
   import ConnectionsGame from '$lib/components/ConnectionsGame.svelte';
 </script>
 
-<h1>🧩 Połączenia - Connections po Polsku</h1>
+<div class="page-container">
+<h1 class="page-title">🧩 Połączenia </h1>
 <ConnectionsGame />
 
 <a href="/connections/add" style="
@@ -19,3 +20,19 @@
 ">
   ➕ Zaproponuj kategorie
 </a>
+</div>
+
+<style>
+.page-title {
+  margin-bottom: 1rem;
+  font-family: sans-serif;
+  font-size: 2rem;
+  font-weight: bold;
+  color: #333;
+}
+
+.page-container {
+  max-width: 75vw;
+  margin: 0 auto;
+}
+</style>

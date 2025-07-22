@@ -124,7 +124,7 @@
   {:else if gameId}
     <div class="inner">
       {#if authors.length}
-        <p class="authors">Autorzy: {authors.join(', ')}</p>
+        <p class="authors">No. {gameId} - Autorzy: {authors.join(', ')}</p>
       {/if}
 
       {#each guessedGroups as group}
@@ -178,7 +178,7 @@
   .inner {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.5rem;
     flex-wrap: wrap;
   }
 
@@ -221,7 +221,8 @@
 
   .tile {
     height: 78px;
-    font-size: 1.1em;
+    min-width: 0;
+    font-size: 1.15em;
     font-weight: 700;
     text-transform: uppercase;
     border: none;
@@ -229,6 +230,7 @@
     cursor: pointer;
     background: #efefe6;
     color: black;
+    overflow: hidden;
     transition: background 0.2s, color 0.2s;
   }
 
@@ -277,10 +279,11 @@
   }
 
   :global(:root) {
-    --group-color-purple: #e6dbf3;
-    --group-color-green: #d8f0da;
-    --group-color-blue: #d8e9f8;
-    --group-color-yellow: #fdf3cb;
+    --group-color-purple: #ba81c5;
+    --group-color-green: #a0c35a;
+    --group-color-blue: #b0c4ef;
+    --group-color-yellow: #f9df6d;
+    font-family: 'Franklin Gothic';
   }
 
   @keyframes shake {
