@@ -139,7 +139,7 @@
       {/each}
 
       <WordsGrid
-        {words}
+        words={words.filter(w => !isSolved(w))}
         {selected}
         {shakeWords}
         {toggle}
